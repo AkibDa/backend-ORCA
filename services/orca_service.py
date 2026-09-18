@@ -70,7 +70,11 @@ class OrcaService:
             raise ValueError("user_id must be provided when session_id is provided")
 
         t_session_lookup_0 = time.perf_counter()
-        state = self.sessions.get(session_id, user_id) if session_id else ConversationState()
+        if session_id:
+            ensure_session_exists(session_id, user_id)
+            state = get_conversation_state(session_id)
+        else:
+            state = ConversationState()
         t_session_lookup_ms = (time.perf_counter() - t_session_lookup_0) * 1000.0
 
         action, plan, extraction, route_timings = llm_route_stateful(
@@ -94,7 +98,7 @@ class OrcaService:
                 "Where are you planning to go fishing or navigate?"
             )
             if session_id:
-                self.sessions.clear(session_id, user_id)
+                clear_conversation_state(session_id)
 
         elif action == "CLARIFY":
             response_text = extraction.clarify_question or "Could you please specify the exact location or region you are asking about?"
@@ -119,9 +123,9 @@ class OrcaService:
         total_ms = (time.perf_counter() - t0) * 1000.0
         
         if session_id:
-            # Save conversation state in-memory
+            # Save conversation state to DB
             t_session_save_0 = time.perf_counter()
-            self.sessions.save(session_id, user_id, state)
+            save_conversation_state(session_id, state)
             t_session_save_ms = (time.perf_counter() - t_session_save_0) * 1000.0
             
             # Query history is disabled for the prototype to avoid Supabase RLS issues
