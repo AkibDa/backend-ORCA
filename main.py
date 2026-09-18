@@ -30,6 +30,14 @@ from backend.api.routes.orca import router as orca_router
 from backend.core.config import MODEL_BACKEND
 from backend.services.orca_service import OrcaService, OrcaSessionStore
 
+# Add agent-orchestration to sys.path so that conversation.*, orchestrator.*,
+# agents.*, schemas.*, and location.* are importable as root-level packages.
+import sys
+from pathlib import Path
+_AGENT_DIR = Path(__file__).resolve().parents[1] / "agent-orchestration"
+if str(_AGENT_DIR) not in sys.path:
+    sys.path.insert(0, str(_AGENT_DIR))
+
 logger = logging.getLogger(__name__)
 
 _startup_time: float = 0.0
@@ -43,7 +51,7 @@ async def lifespan(app: FastAPI):
 
     logger.info("STARTUP: loading Qwen model (auto-detecting backend)...")
 
-    from Proto.conversation.model import get_conversation_model
+    from conversation.model import get_conversation_model
 
     model = get_conversation_model()
 
@@ -52,7 +60,7 @@ async def lifespan(app: FastAPI):
     
     logger.info("STARTUP: Warming up Qwen model caches...")
     try:
-        from Proto.conversation.prompts import EXTRACTION_SYSTEM_PROMPT, RESPONSE_SYSTEM_PROMPT_TEMPLATE
+        from conversation.prompts import EXTRACTION_SYSTEM_PROMPT, RESPONSE_SYSTEM_PROMPT_TEMPLATE
         model.extract(EXTRACTION_SYSTEM_PROMPT, "warmup query test")
         model.generate_text(RESPONSE_SYSTEM_PROMPT_TEMPLATE.format(language_desc="English."), "warmup")
         logger.info("STARTUP: Qwen warmup complete")

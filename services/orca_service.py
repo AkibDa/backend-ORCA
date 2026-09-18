@@ -11,15 +11,15 @@ from backend.core.config import settings
 
 logger = logging.getLogger(__name__)
 
-PROTO_DIR = Path(__file__).resolve().parents[2] / "Proto"
+PROTO_DIR = Path(__file__).resolve().parents[2] / "agent-orchestration"
 
 if str(PROTO_DIR) not in sys.path:
     sys.path.insert(0, str(PROTO_DIR))
 
-from Proto.conversation.router import llm_route_stateful
-from Proto.conversation.state import ConversationState
-from Proto.conversation.response import respond
-from Proto.location.resolver import extract_location
+from conversation.router import llm_route_stateful
+from conversation.state import ConversationState
+from conversation.response import respond
+from location.resolver import extract_location
 
 
 from backend.db.sessions import ensure_session_exists

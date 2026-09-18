@@ -1,5 +1,5 @@
 from backend.db.client import get_supabase_client
-from Proto.conversation.state import ConversationState
+from conversation.state import ConversationState
 import time
 import logging
 
