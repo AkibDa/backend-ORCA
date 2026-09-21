@@ -44,7 +44,7 @@ settings = Settings()
 
 MODEL_BACKEND = os.getenv("ORCA_MODEL_BACKEND", "cuda").lower()
 
-if MODEL_BACKEND not in {"cuda", "mlx"}:
+if MODEL_BACKEND not in {"cuda", "mlx", "cpu"}:
     raise RuntimeError(
-        "ORCA_MODEL_BACKEND must be 'cuda' or 'mlx'. " f"Got: {MODEL_BACKEND!r}"
+        "ORCA_MODEL_BACKEND must be 'cuda', 'mlx', or 'cpu'. " f"Got: {MODEL_BACKEND!r}"
     )

@@ -10,7 +10,7 @@ class OrcaQueryRequest(BaseModel):
         max_length=1000,
         description="Natural-language marine query",
     )
-    session_id: UUID | None = Field(
+    session_id: str | None = Field(
         None,
         description="Optional conversation session identifier",
     )
