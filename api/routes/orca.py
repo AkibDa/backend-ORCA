@@ -27,7 +27,7 @@ def process_query(
     try:
         return service.process_query(
             query=request.query,
-            session_id=str(request.session_id) if request.session_id else None,
+            session_id=request.session_id.strip() if request.session_id and request.session_id.strip() else None,
             user_id=user_id,
             location_name=request.location,
             bypass_db_lookup=True,
@@ -61,7 +61,7 @@ def command_center_query(
     try:
         result = service.process_query(
             query=request.query,
-            session_id=str(request.session_id) if request.session_id else None,
+            session_id=request.session_id.strip() if request.session_id and request.session_id.strip() else None,
             user_id=f"cmd_center_{ip_address}",
             location_name=request.location,
             bypass_db_lookup=True,

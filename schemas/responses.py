@@ -39,6 +39,7 @@ class OrcaQueryResponse(BaseModel):
     query: str
     action: str
     response: str | None
+    session_id: str | None = None
     segments: list[ResponseSegment] | None = None
     plan: dict[str, Any] | None
     extraction: dict[str, Any]

@@ -15,12 +15,17 @@ def get_supabase_client() -> Client:
     from backend.api.dependencies.auth import current_token
     token = current_token.get()
     
-    # Do not set Authorization in options.headers because create_client overrides it
-    # with the SUPABASE_KEY. Instead, apply it directly to the returned client.
+    if token:
+        # In recent versions of supabase-py, passing it in headers is supported and preferred
+        options.headers.update({"Authorization": f"Bearer {token}"})
+        
     client = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY, options=options)
     
     if token:
-        # This properly authenticates all table() queries (Postgrest) for this client instance
-        client.postgrest.auth(token)
-        
+        # Fallback to older method just in case
+        try:
+            client.postgrest.auth(token)
+        except Exception:
+            pass
+            
     return client

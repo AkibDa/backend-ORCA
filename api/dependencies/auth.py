@@ -26,7 +26,7 @@ def get_jwks_client() -> PyJWKClient:
         _jwks_client = PyJWKClient(get_jwks_url())
     return _jwks_client
 
-def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
     token = credentials.credentials
     try:
         jwks_client = get_jwks_client()

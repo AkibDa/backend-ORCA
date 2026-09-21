@@ -70,6 +70,10 @@ class OrcaService:
             raise ValueError("user_id must be provided when session_id is provided")
 
         t_session_lookup_0 = time.perf_counter()
+        if not session_id and user_id:
+            from backend.db.sessions import get_or_create_latest_session
+            session_id = get_or_create_latest_session(user_id)
+            
         if session_id:
             ensure_session_exists(session_id, user_id)
             state = get_conversation_state(session_id)
@@ -137,6 +141,7 @@ class OrcaService:
             "query": query,
             "action": action,
             "response": response_text,
+            "session_id": session_id,
             "segments": segments,
             "plan": plan.model_dump(mode="json") if plan else None,
             "extraction": extraction.model_dump(mode="json"),

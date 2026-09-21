@@ -64,7 +64,7 @@ _concurrency_lock = threading.Lock()
 _active_requests = 0
 
 
-def check_rate_limit(request: Request, user_id: str = Depends(get_current_user)) -> str:
+async def check_rate_limit(request: Request, user_id: str = Depends(get_current_user)) -> str:
     """Rate limit authenticated users based on their user_id."""
     key = f"user:{user_id}"
     _rate_limiter.check_limit(
@@ -74,7 +74,7 @@ def check_rate_limit(request: Request, user_id: str = Depends(get_current_user))
     )
     return user_id
 
-def check_rate_limit_unauthenticated(request: Request) -> str:
+async def check_rate_limit_unauthenticated(request: Request) -> str:
     """Rate limit unauthenticated endpoints based on client IP."""
     ip = request.client.host if request.client else "127.0.0.1"
     key = f"ip:{ip}"
